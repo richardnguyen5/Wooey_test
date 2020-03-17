@@ -1,0 +1,32 @@
+import argparse
+import sys
+
+parser = argparse.ArgumentParser(description='Read XLS file and output XLS file with 1 string value')
+parser.add_argument('--input', type=argparse.FileType('rb'))    #input XLS file to read
+parser.add_argument('--output', type=argparse.FileType('wb'))   #writes result to output XLS file
+
+
+def read_xls_sum(input_file, output_file):
+    import xlrd 
+    import xlsxwriter 
+    
+    #open sheet 'test' from input XLS file  
+    file_xlsx = xlrd.open_workbook(file_contents = input_file.read()) 
+    sheet = file_xlsx.sheet_by_name('test')
+
+    #concatenate string "test_output" to the string value from cell B2(1,1) of the input XLS file (string "TEST_INPUT")
+    test_input_output = sheet.cell_value(1,1) + 'test_ouput'
+
+    #writes qual_name variable to output file cell A1 
+    workbook = xlsxwriter.Workbook(output_file) 
+    worksheet = workbook.add_worksheet() 
+    worksheet.write('A1', test_input_output) 
+    workbook.close() 
+
+def main():    
+    args = parser.parse_args()
+    read_xls_sum(args.input, args.output)
+    print(f'Wrote data to "{args.output}"')
+
+if __name__ == "__main__":
+    sys.exit(main()) 
